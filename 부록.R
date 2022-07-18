@@ -6,6 +6,22 @@
 # 데이터 세트 다운로드: https://compas.lh.or.kr/subj/example/data?subjNo=SBJ_2003_001
 # 분석코드 예시: https://compas.lh.or.kr/subj/past/code?subjNo=SBJ_1910_001&teamNo=85
 
+#------------------------------------------------------------------------------------
+# stplanr 등 일부 라이브러리 버전이 업데이트되면서 일부 기능이 막혔습니다.
+# 설치된 stplanr 버전이 1.X이라면 아래 순서대로 (1) ~ (3) 까지 실행하여
+# 0.85로 다운그레이드 해 주십시오
+
+# (1) stplanr 버전이 1.X인지 확인
+packageVersion("stplanr")
+
+# (2) 기존버전 삭제후 R 스튜디오 재시작
+remove.packages("stplanr")
+
+# (3) 0.85버전으로 설치
+remotes::install_github("ropensci/stplanr", ref = "v0.8.5")
+#--------------------------------------------------------------------------------------
+
+
 #---# 01-1_fishnet(집계구) 만들기
 
 # (1) 화성시 경계 데이터 불러오기
