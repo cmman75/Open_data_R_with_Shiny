@@ -11,7 +11,7 @@
     https://drive.google.com/file/d/1LoJRr33-nGfc-BsVRW7fOCV9OC5Z-hdF/view?usp=sharing  
 
 3) [22-08-02] 
-   응용편_전국 시군별 분석.zip: 서울 외 다른 지역의 데이터 분석을 원하시는 독자분들이 많아서 응용버전의 스크립트를 업로드 하였습니다.
+   응용편_전국 시군별 분석.zip: 서울 외 다른 지역의 데이터 분석을 원하시는 독자분들이 많아서 전국 시군별 분석 가능한 스크립트를 업로드 하였습니다.
    용량이 커서 구글 드라이브 링크로 연결합니다.              
    https://drive.google.com/file/d/1Cpls5ODKlerOzwCjTkq9vC-DfARW76bp/view?usp=sharing
               
