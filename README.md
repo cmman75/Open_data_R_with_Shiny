@@ -5,6 +5,7 @@
 
 5) 향후 업로드 예정: 
    독자분들께서 이메일로 문의하신 내용과 답변들을 정리하여 업로드할 예정입니다.
+   https://github.com/cmman75/Open_data_R_with_Shiny/blob/main/13_%EC%A7%88%EB%AC%B8%EA%B3%BC%20%EB%8B%B5%EB%B3%80(Q%26A)
    
 4)  [22-08-06] 
     챕터별 강의 PPT 업로드  
