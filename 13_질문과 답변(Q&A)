@@ -1,0 +1,16 @@
+
+# 독자분들께서 교재 실습 도중에 질문이 오는 경우가 종종 있어서 관련 부분 정리하여 공유합니다.
+
+
+# Q-01. 공공데이터 포털에 URL로 크롤링 요청시 아래와 같이 SERVICE KEY IS NOT REGISTERED ERROR 라는 메시지만 나옵니다.
+
+  <resultCode>99</resultCode>
+  <resultMsg>SERVICE KEY IS NOT REGISTERED ERROR.</resultMsg>
+
+# A-01. 서비스키를 방금 신청하신 것 같습니다.
+        처음 발급받은 경우 최소 1시간 기다리셔야 등록작업이 완료됩니다.
+        잠깐 쉰 다음에(1~2시간 후) 다시 시도하시면 정상적으로 크롤링 하실 수 있습니다.
+        
+        
+        
+
