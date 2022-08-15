@@ -63,4 +63,37 @@
      이용자 수 20건 이상인 O-D 라인 필터링
     > od_line <- od_line[od_line$총이용객수 > 20, ]  
 
+
+#---# [P.229] #---#
+
+# Q1. od_line_sln <- SpatialLinesNetwork(od_line) 실행시 다음과 같은 에러가 발생합니다. 어떻게 해결해야 하나요?
+  #------------------------------------#
+  Error in SpatialLinesNetwork(od_line) :
+  could not find function "SpatialLinesNetwork"
+  #------------------------------------#
+
+# A1. 이 문제는 stplanr 라이브러리의 버전 문제인것 같습니다.
+      packageVersion("stplanr") 해보면 1.0XXXX 버전 나오시지 않나요?
+      버전이 1.0 x 라면 아래 순서대로 실행하여 다운 그레이드(1.0 => 0.85) 해 주십시오.
+      
+  1) 패키지 삭제 명령어를 실행하십시오
+  > remove.packages("stplanr")
+
+  2) R 스튜디오를 종료 후 재실행 하여 주십시오
   
+  3) 0.85 버전을 설치하여 주십시오
+  > remotes::install_github("ropensci/stplanr", ref = "v0.8.5")
+
+  이 때 옵션으로 1번하면 에러가 나는 경우가 있더라구요 / 2번으로 하면 괜찮은것 같습니다.
+
+  1: All                            
+  2: CRAN packages only              
+  3: None                            
+  4: .....
+
+  4) 패키지 버전을 확인하여 주십시오
+  > packageVersion("stplanr")
+  [1] ‘0.8.5’
+
+  5) 이제 에러가 발생하였던 코드를 실행하여 보면 정상적으로 실행될 겁니다.
+  > od_line_sln <- SpatialLinesNetwork(od_line)    
