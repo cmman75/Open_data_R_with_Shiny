@@ -38,3 +38,29 @@
 
 
 
+#---# [P.228] #---#
+
+# Q1. od_line <- od2line(od_intra2, fishnet) 실행시 다음과 같은 에러가 발생합니다. 어떻게 해결해야 하나요?
+  #------------------------------------#
+  Error in UseMethod("od2line", object = zones) :
+  no applicable method for 'od2line' applied to an object of class "c('SpatialPolygonsDataFrame', 'SpatialPolygons', 'Spatial', 'SpatialPolygonsNULL', 'SpatialVector')"
+  #------------------------------------#
+  
+# A1. 일단 에러 원인부터 말씀드리자면 od2line(A , B)에서 A 와 B 의 공간 포맷 형식이 달라서 나타나는 문제 입니다.
+      해당 에러의 원인을 파악하고 정상적 실행을 위하여 다음의 네 단계를 따라 진행하여 보십시오.
+
+  1) 두 파일 A 와 B 의 속성을 보시면 형식이 다름니다.
+    > class(fishnet)     # sp 포맷
+    > class(od_intra2)   # sf 포맷(데이터프레임)
+
+  2) 따라서 다음의 명령어로 강제로 fishnet 을 sf 포맷으로 변환하였습니다(두 데이터의 형태를 일치시키기 위함).
+    > fishnet <- as(fishnet, "sf")
+
+  3) 그런 다음 od2line 명령어를 실행하면 아무런 문제없이 Origin - Destination 를 연결하는 선이 그려질 것입니다.
+    > od_line <- od2line(od_intra2, fishnet)  
+
+  4) 일정 건수 이상의 선만 필터링 하기 위해서는 다음의 명령어를 사용해 보시면 됩니다.
+     이용자 수 20건 이상인 O-D 라인 필터링
+    > od_line <- od_line[od_line$총이용객수 > 20, ]  
+
+  
