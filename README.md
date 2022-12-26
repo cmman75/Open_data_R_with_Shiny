@@ -1,10 +1,13 @@
 ### [Do it!] 공공데이터로 배우는 R 데이터 분석 with 샤이니
 
 
- 
- 
- 
- 
+
+ 6) [22-12-26]
+   
+    공공데이터포털에서 API 신청하실때「아파트매매 실거래 상세 자료」가 아닌「아파트매매 실거래」를 신청하셔야 합니다.
+    다른 API를 신청하신 다음에 크롤링 하시면 SERVICE ACCESS DENIED ERROR가 나옵니다.
+    이 때 아래 링크에 있는「아파트매매 실거래」API를 신청하시면 정상 작동 될겁니다.
+    https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15058747
  
 
 5) [22-08-15] 
