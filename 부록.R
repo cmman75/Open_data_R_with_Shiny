@@ -355,9 +355,33 @@ load("./01_save/02_003_trip_chain.rdata")
 load("./01_save/01_002_fishnet.Rdata")
 load("./01_save/03_003_sta_pnt.rdata")
 load("./01_save/01_001_admin.rdata")
-# 공간조인
+# 공간조인 (기능 제거로 작동하지 않음)
 require(spatialEco)  #  install.packages("spatialEco") 
 sta_pnt <- point.in.poly(sta_pnt, fishnet) 
+
+#------------------------------------------------------------------------------------
+# 기존 spatialEco에서 point.in.poly 기능이 제거되어
+# 새로운 대체코드를 작성하였습니다.
+# 계산에 약간 시간이 걸립니다 (2~3분 정도)
+# 기존의 sp형 포맷은 포인트, 폴리곤, 라인 계산에 특화되어 빨랐지만
+# 새로운 sf형 포맷은 데이터 프레임 계산에는 빠른데 도형 계산은 느리기 때문입니다. 
+
+library(sf)  # sf 라이브러리 로딩
+
+class(sta_pnt)                # 속성 확인하고 변환
+sta_pnt <- as(sta_pnt, "sf")  # sp -> sf
+class(sta_pnt)
+
+class(fishnet)                # 속성 확인하고 변환
+fishnet <- as(fishnet, "sf")  # sp -> sf
+class(fishnet)
+
+sta_pnt <- st_intersection(sta_pnt, fishnet) # 공간결합
+# point.in.poly는 sp형에 대한 결합 /  st_intersection는 sf형에 대한 결합
+
+sta_pnt <- as(sta_pnt, "Spatial")   # 다시 sf -> sp형으로 변환
+#---------------------------------------------------------------------------------------------
+
 # 저장 
 save(sta_pnt, file="./01_save/04_001_sta_pnt.rdata") 
 head(sta_pnt@data[, c(1, 4, 10, 12)], 2)      
