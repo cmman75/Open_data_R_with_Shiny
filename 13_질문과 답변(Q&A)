@@ -37,6 +37,35 @@
      크롤링하다 보면 데이터가 꼬일 때가 있는데 파일 이름을 숫자코드가 아닌 지역명(서울_종로_202101.csv)으로 하는 것이 나중에 문제가 발생하였을 때 빠르게 원인파악을 할 수 있습니다.
 
 
+#---# [P.220] #---#
+
+# sp 데이터를 공간 결합하는 point.in.poly 기능이 depricated 되어 
+# 조금 우회하는 방법으로 해결하였습니다.
+
+# 두 데이터를 sp -> sf 형으로 변환한 다음 sf 데이터를 공간 결합하는
+# st_intersection 함수를 이용하여 공간결합을 실행하였습니다.
+
+# 공간조인 (작동 안함)
+# require(spatialEco)  #  install.packages("spatialEco")
+# sta_pnt <- point.in.poly(sta_pnt, fishnet)
+
+# 공간조인 (작동함) => 시간 많이 걸림 => 2~3분 정도
+
+library(sf)  # sf 라이브러리 로딩
+
+class(sta_pnt)                # 속성 확인하고 변환
+sta_pnt <- as(sta_pnt, "sf")  # sp -> sf
+class(sta_pnt)
+
+class(fishnet)                # 속성 확인하고 변환
+fishnet <- as(fishnet, "sf")  # sp -> sf
+class(fishnet)
+
+sta_pnt <- st_intersection(sta_pnt, fishnet) # 공간결합
+# point.in.poly는 sp형에 대한 결합 /  st_intersection는 sf형에 대한 결합
+
+sta_pnt <- as(sta_pnt, "Spatial")   # 다시 sf -> sp형으로 변환
+
 
 #---# [P.228] #---#
 
