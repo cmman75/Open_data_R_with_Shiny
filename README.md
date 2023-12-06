@@ -1,31 +1,34 @@
 ### [Do it!] 공공데이터로 배우는 R 데이터 분석 with 샤이니
 
 
+7) [23-12-06] 
+   부록에 들어있는 화성시 교통카드 데이터 분석 예제 데이터에 문제가 생겨서 다시 업로드하였습니다.
+   SBJ_2003_001.zip ~ SBJ_2003_001.z02 까지 세 개 파일을 다운받으시면 됩니다.
 
- 6) [22-12-26]
+6) [23-12-06] 
+
+   전국 시군별 부동산 데이터 분석
+   서울 외 다른 지역의 데이터 분석을 원하시는 독자분들이 많아서 전국 시군별 분석 가능한 스크립트를 업로드 하였습니다.
+   깃허브에 분할 업로드 되어 있습니다.
+   2208_응용 스크립트_전국 부동산 데이터 분석.zip ~ 2208_응용 스크립트_전국 부동산 데이터 분석.z04 까지 다섯 개 파일 다운로드 받으시면 됩니다.
+
+ 5) [22-12-26]
    
     공공데이터포털에서 API 신청하실때「아파트매매 실거래 상세 자료」가 아닌「아파트매매 실거래」를 신청하셔야 합니다.
     다른 API를 신청하신 다음에 크롤링 하시면 SERVICE ACCESS DENIED ERROR가 나옵니다.
     
     이 때 아래 링크에 있는「아파트매매 실거래」API를 신청하시면 정상 작동 될겁니다.
     https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15058747
- 
 
-5) [22-08-15] 
+4) [22-08-15] 
 
    독자분들께서 이메일로 문의하신 내용과 답변들을 정리하여 업로드할 예정입니다.
    https://github.com/cmman75/Open_data_R_with_Shiny/blob/main/13_%EC%A7%88%EB%AC%B8%EA%B3%BC%20%EB%8B%B5%EB%B3%80(Q%26A)
    
-4) [22-08-06] 
+3) [22-08-06] 
 
-    챕터별 강의 PPT 업로드  
-    https://drive.google.com/file/d/1LoJRr33-nGfc-BsVRW7fOCV9OC5Z-hdF/view?usp=sharing  
-
-3) [22-08-02] 
-
-   응용편_전국 시군별 분석.zip: 서울 외 다른 지역의 데이터 분석을 원하시는 독자분들이 많아서 전국 시군별 분석 가능한 스크립트를 업로드 하였습니다.
-   용량이 커서 구글 드라이브 링크로 연결합니다.              
-   https://drive.google.com/file/d/1Cpls5ODKlerOzwCjTkq9vC-DfARW76bp/view?usp=sharing
+    챕터별 강의 PPT 업로드: 깃허브에서 파워포인트(01-12강).zip 다운로드 받으시면 됩니다.
+    https://github.com/cmman75/Open_data_R_with_Shiny/blob/main/%ED%8C%8C%EC%9B%8C%ED%8F%AC%EC%9D%B8%ED%8A%B8(01-12%EA%B0%95).zip
               
 2) [22-06-01] 
 
