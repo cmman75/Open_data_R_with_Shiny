@@ -9,7 +9,7 @@
    (그리고 csv 파일을 여실 때 엑셀보다는 메모장을 추천해드립니다.)
 
    --- 변경이전 스크립트 ---
-   item_temp_dt <- data.table(year = item_temp[4],     # 거래 년 
+   item_temp_dt <- data.table(year = item_temp[4],     # 거래 년
                               month = item_temp[7],    # 거래 월
                               day = item_temp[8],      # 거래 일
                               price = item_temp[1],    # 거래금액
