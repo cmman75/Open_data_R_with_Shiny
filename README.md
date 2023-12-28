@@ -9,31 +9,31 @@
    (그리고 csv 파일을 여실 때 엑셀보다는 메모장을 추천해드립니다.)
 
    --- 변경이전 스크립트 ---
-   item_temp_dt <- data.table(year = item_temp[4],     # 거래 년
-                              month = item_temp[7],    # 거래 월
-                              day = item_temp[8],      # 거래 일
-                              price = item_temp[1],    # 거래금액
-                              code = item_temp[12],    # 지역코드
-                              dong_nm = item_temp[5],  # 법정동
-                              jibun = item_temp[11],   # 지번
-                              con_year = item_temp[3], # 건축연도 
-                              apt_nm = item_temp[6],   # 아파트 이름   
-                              area = item_temp[9],     # 전용면적
-                              floor = item_temp[13])   # 층수
+   item_temp_dt <- data.table(year = item_temp[4],
+                              month = item_temp[7],
+                              day = item_temp[8],
+                              price = item_temp[1],
+                              code = item_temp[12], 
+                              dong_nm = item_temp[5], 
+                              jibun = item_temp[11],   
+                              con_year = item_temp[3], 
+                              apt_nm = item_temp[6],   
+                              area = item_temp[9],     
+                              floor = item_temp[13])  
 
    
    --- 변경이후 스크립트 ---
-   item_temp_dt <- data.table(year = item_temp[4],     # 거래 년 
-                              month = item_temp[8],    # 거래 월
-                              day = item_temp[9],      # 거래 일
-                              price = item_temp[1],    # 거래금액
-                              code = item_temp[13],    # 지역코드
-                              dong_nm = item_temp[6],  # 법정동
-                              jibun = item_temp[12],   # 지번
-                              con_year = item_temp[3], # 건축연도 
-                              apt_nm = item_temp[7],   # 아파트 이름   
-                              area = item_temp[10],     # 전용면적
-                              floor = item_temp[14])   # 층수 
+   item_temp_dt <- data.table(year = item_temp[4],    
+                              month = item_temp[8],   
+                              day = item_temp[9],      
+                              price = item_temp[1],   
+                              code = item_temp[13],    
+                              dong_nm = item_temp[6], 
+                              jibun = item_temp[12],   
+                              con_year = item_temp[3], 
+                              apt_nm = item_temp[7],  
+                              area = item_temp[10],    
+                              floor = item_temp[14]) 
 
 
 
