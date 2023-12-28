@@ -1,5 +1,42 @@
 ### [Do it!] 공공데이터로 배우는 R 데이터 분석 with 샤이니
 
+8) [23-12-28]  ## 긴급공지 !!!!
+
+   공공데이터포털에서 아파트 실거래가 정보 구조가 일부 변경되어 '02_자료수집.R' 스크립트의 일부를 다음과 같이 변경하였습니다.
+   (독자분들의 제보로 변경사실을 알게 되었습니다. 감사합니다. !!!)
+   지금부터는 새로운 스크립트를 받아서 연습하여 보시면 됩니다.
+   엑셀에서 csv 파일을 열어보았을 때 정렬이 잘 안되어 있는 것 같지만 끝까지 실행하여 보시면 정확하게 결과가 도출됩니다.
+   (그리고 csv 파일을 여실 때 엑셀보다는 메모장을 추천해드립니다.)
+
+   --- 변경이전 스크립트 ---
+   item_temp_dt <- data.table(year = item_temp[4],     # 거래 년 
+                              month = item_temp[7],    # 거래 월
+                              day = item_temp[8],      # 거래 일
+                              price = item_temp[1],    # 거래금액
+                              code = item_temp[12],    # 지역코드
+                              dong_nm = item_temp[5],  # 법정동
+                              jibun = item_temp[11],   # 지번
+                              con_year = item_temp[3], # 건축연도 
+                              apt_nm = item_temp[6],   # 아파트 이름   
+                              area = item_temp[9],     # 전용면적
+                              floor = item_temp[13])   # 층수
+
+   
+   --- 변경이후 스크립트 ---
+   item_temp_dt <- data.table(year = item_temp[4],     # 거래 년 
+                              month = item_temp[8],    # 거래 월
+                              day = item_temp[9],      # 거래 일
+                              price = item_temp[1],    # 거래금액
+                              code = item_temp[13],    # 지역코드
+                              dong_nm = item_temp[6],  # 법정동
+                              jibun = item_temp[12],   # 지번
+                              con_year = item_temp[3], # 건축연도 
+                              apt_nm = item_temp[7],   # 아파트 이름   
+                              area = item_temp[10],     # 전용면적
+                              floor = item_temp[14])   # 층수 
+
+
+
 
 7) [23-12-06]
    
