@@ -20,7 +20,7 @@ head(apt_juso, 2)   # 추출결과 확인
 
 add_list <- list()   # 빈 리스트 생성
 cnt <- 0             # 반복문 카운팅 초기값 설정
-kakao_key = ""       # 인증키
+kakao_key = "인증키"       # 인증키
 
 #---# [2단계: 지오코딩]
 
@@ -100,3 +100,4 @@ for(input in inputs) {
   tryCatch({ 
     print(paste(input, "의 로그값은 =>", log(input)))
   }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")} )}
+
