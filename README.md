@@ -9,20 +9,20 @@
    (그리고 csv 파일을 여실 때 엑셀보다는 메모장을 추천해드립니다.)
 
    --- 변경이전 스크립트 ---
-   item_temp_dt <- data.table(year = item_temp[4],
-                              month = item_temp[7],
-                              day = item_temp[8],
-                              price = item_temp[1],
-                              code = item_temp[12], 
-                              dong_nm = item_temp[5], 
+   item_temp_dt <- data.table(year = item_temp[4],  
+                              month = item_temp[7],  
+                              day = item_temp[8],  
+                              price = item_temp[1],  
+                              code = item_temp[12],   
+                              dong_nm = item_temp[5],  
                               jibun = item_temp[11],   
-                              con_year = item_temp[3], 
+                              con_year = item_temp[3],   
                               apt_nm = item_temp[6],   
                               area = item_temp[9],     
-                              floor = item_temp[13])  
+                              floor = item_temp[13])   
 
    
-   --- 변경이후 스크립트 ---
+   --- 변경이후 스크립트 ---   
    item_temp_dt <- data.table(year = item_temp[4],    
                               month = item_temp[8],   
                               day = item_temp[9],      
