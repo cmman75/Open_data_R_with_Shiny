@@ -25,7 +25,7 @@ datelist[1:3]  # 확인
 
 #---# [4단계: 인증키 입력]
 
-service_key <- "ixDCDaiPR8ic9xZZlhdlGSAlXfZ5Wx7zkEOFymk1GD2iz%2Fvrsbnw%2FX9dK4p7KGGudOKM2ke5%2F7TDmQa%2FACX1wQ%3D%3D"  # 인증키 입력
+service_key <- "ixDCD..."  # 인증키 입력
 
 
 #--------------------------------------------------
