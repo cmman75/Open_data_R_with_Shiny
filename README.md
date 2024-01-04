@@ -28,12 +28,12 @@
                               day = item_temp[9],      
                               price = item_temp[1],   
                               code = item_temp[13],    
-                              dong_nm = item_temp[6], 
+                              dong_nm = item_temp[6],  
                               jibun = item_temp[12],   
-                              con_year = item_temp[3], 
+                              con_year = item_temp[3],   
                               apt_nm = item_temp[7],  
                               area = item_temp[10],    
-                              floor = item_temp[14]) 
+                              floor = item_temp[14])   
 
 
 
