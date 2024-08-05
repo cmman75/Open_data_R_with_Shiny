@@ -13,8 +13,7 @@
    기존 API 신규 가입이 막혔으므로 교재 26 페이지의 '02-2 API 인증키 얻기' 대신 다음의 PDF 파일을 참조하여 API를 신청해 주십시요
    
    https://github.com/cmman75/Open_data_R_with_Shiny/blob/main/202408_api%20%EC%8B%A0%EC%B2%AD%EB%B0%A9%EB%B2%95.pdf
-  
-  
+   
 #--------------------------------------  
 10) [24-05-28]  ## 긴급공지 !!!!
 
