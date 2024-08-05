@@ -99,7 +99,7 @@ head(apt_price, 2)
 
 #---# [2단계: 이전/이후 데이터 세트 만들기]
 
-kde_before <- subset(apt_price, ymd < "2021-07-01")  # 이전 데이터 필터링
+kde_before <- subset(apt_price, ymd < "2023-07-01")  # 이전 데이터 필터링
 kde_before <- aggregate(kde_before$py, by=list(kde_before$ID),mean)  # 평균가격
 colnames(kde_before) <- c("ID", "before")   # 컬럼명 변경
 

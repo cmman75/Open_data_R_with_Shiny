@@ -1,0 +1,13 @@
+
+# R 스크립트 창에서 다음 명령어를 실행하세요
+
+# 01_깃허브 다운로드 
+
+download.file(url = "https://github.com/cmman75/Open_data_R_with_Shiny/archive/master.zip" , destfile = "master.zip")
+
+# 02_다운로드 파일 압축풀기
+
+unzip(zipfile = "master.zip")
+
+# 03_위치 확인 후 탐색기로 해당폴더 찾아가기 (getwd())
+getwd()
