@@ -9,14 +9,14 @@
    이에 교재 47 페이지의 [5단계] 응답 내역 저장하기 코드를 다음과 같이 변경하였습니다.
    인증키 발급받으신 시기와 상관없이 모두 정상 작동되는 것을 확인하였습니다.
 
-   # 수정 이전
-   113: region_nm <- subset(loc, code== str_sub(url_list[i],195, 199))$addr_1 # 지역명 추출
-   114: month <- str_sub(url_list[i],210, 215)                                # 연월(YYYYMM) 추출
+   수정 이전   
+   113: region_nm <- subset(loc, code== str_sub(url_list[i],195, 199))$addr_1 # 지역명 추출   
+   114: month <- str_sub(url_list[i],210, 215)                                # 연월(YYYYMM) 추출   
    
-   # 수정 이후
-   113: region_nm <- subset(loc, code == regmatches(url_list[i], regexpr("(?<=LAWD_CD=)[^&]*", url_list[i], perl=TRUE)))[,4] # 지역명 추출
-   114: month <- gsub(".*DEAL_YMD=(\\d{6}).*", "\\1", url_list[i])                                                           # 연월(YYYYMM) 추출
-
+   수정 이후   
+   113: region_nm <- subset(loc, code == regmatches(url_list[i], regexpr("(?<=LAWD_CD=)[^&]*", url_list[i], perl=TRUE)))[,4] # 지역명 추출   
+   114: month <- gsub(".*DEAL_YMD=(\\d{6}).*", "\\1", url_list[i])                                                           # 연월(YYYYMM) 추출   
+   
 #--------------------------------------  
 11) [24-08-05]  
 
