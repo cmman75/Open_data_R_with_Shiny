@@ -27,6 +27,7 @@ datelist[1:3]          # 확인
 
 service_key <-  "인증키"  # 인증키(Encoding) 입력
 
+
 #--------------------------------------------------
 # 3-2 요청목록 생성: 자료를 어떻게 요청할까?
 #--------------------------------------------------
@@ -44,10 +45,11 @@ for(i in 1:nrow(loc)){           # 외부반복: 25개 자치구
     #---# 요청 목록 채우기 (25 X 12= 300)
     url_list[cnt] <- paste0("http://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade?",
                             "serviceKey=", service_key,  # 인증키
-                            "&LAWD_CD=", loc[i,1],         # 지역코드
-                            "&DEAL_YMD=", datelist[j])    # 수집월
-  } 
-  Sys.sleep(0.1)   # 0.1초간 멈춤
+                            "&LAWD_CD=", loc[i,1],       # 지역코드
+                            "&DEAL_YMD=", datelist[j],   # 수집월
+                            "&numOfRows=", 1000)         # 한번에 가져올 최대 자료 수 
+  }                                                      # (한달에 한 지역에 1,000건 이상 거래는 거의 없을테니 최대값 설정 / 미설정시 10건만 가져옴) 
+  Sys.sleep(0.1)                                          # 0.1초간 멈춤
   msg <- paste0("[", i,"/",nrow(loc), "]  ", loc[i,3], " 의 크롤링 목록이 생성됨 => 총 [", cnt,"] 건") # 알림 메시지
   cat(msg, "\n\n") 
 }
@@ -106,8 +108,6 @@ for(i in 1:length(url_list)){   # 요청목록(url_list) 반복
     item[[m]] <- item_temp_dt}                          #---# 분리된 거래내역 순서대로 저장
   apt_bind <- rbindlist(item)                           # 통합 저장
   
-  
-  
 #---# [5단계: 응답 내역 저장]
   
   region_nm <- subset(loc, code == regmatches(url_list[i], regexpr("(?<=LAWD_CD=)[^&]*", url_list[i], perl=TRUE)))[,4] # 지역명 추출
@@ -117,6 +117,7 @@ for(i in 1:length(url_list)){   # 요청목록(url_list) 반복
   msg <- paste0("[", i,"/",length(url_list), "] 수집한 데이터를 [", path,"]에 저장 합니다.")  # 알림 메시지
   cat(msg, "\n\n")
 }                                                                                             # 바깥쪽 반복문 종료
+
 
 #----------
 # 3-4 통합
