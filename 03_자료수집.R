@@ -27,7 +27,6 @@ datelist[1:3]          # 확인
 
 service_key <-  "인증키"  # 인증키(Encoding) 입력
 
-
 #--------------------------------------------------
 # 3-2 요청목록 생성: 자료를 어떻게 요청할까?
 #--------------------------------------------------
@@ -87,11 +86,11 @@ for(i in 1:length(url_list)){   # 요청목록(url_list) 반복
 
 #---# [4단계: 거래 내역 추출]
   
-  item <- list()  # 전체 거래내역(items) 저장 임시 리스트 생성
+  item <- list()                # 전체 거래내역(items) 저장 임시 리스트 생성
   item_temp_dt <- data.table()  # 세부 거래내역(item) 저장 임시 테이블 생성
-  Sys.sleep(.1)  # 0.1초 멈춤
-  for(m in 1:size){  # 전체 거래건수(size)만큼 반복
-    #---# 세부 거래내역 분리   
+  Sys.sleep(.1)                 # 0.1초 멈춤
+  for(m in 1:size){                                     # 전체 거래건수(size)만큼 반복
+                                                        #---# 세부 거래내역 분리   
     item_temp <- xmlSApply(items[[m]],xmlValue)
     item_temp_dt <- data.table(year = item_temp[10],    # 거래 년 (dealYear)
                                month = item_temp[9],    # 거래 월 (dealMonth)
@@ -104,19 +103,20 @@ for(i in 1:length(url_list)){   # 요청목록(url_list) 반복
                                apt_nm = item_temp[2],   # 아파트 이름 (aptNm)   
                                area = item_temp[13],    # 전용면적 (excluUseAr)
                                floor = item_temp[14])   # 층수 (floor)
-    item[[m]] <- item_temp_dt}                       # 분리된 거래내역 순서대로 저장
-  apt_bind <- rbindlist(item)                        # 통합 저장
+    item[[m]] <- item_temp_dt}                          #---# 분리된 거래내역 순서대로 저장
+  apt_bind <- rbindlist(item)                           # 통합 저장
+  
+  
   
 #---# [5단계: 응답 내역 저장]
   
-  region_nm <- subset(loc, code== str_sub(url_list[i],195, 199))$addr_1 # 지역명 추출
-  month <- str_sub(url_list[i],210, 215)   # 연월(YYYYMM) 추출
-  path <- as.character(paste0("./02_raw_data/", region_nm, "_", month,".csv")) # 저장위치 설정
-  write.csv(apt_bind, path)     # csv 저장
-  msg <- paste0("[", i,"/",length(url_list), "] 수집한 데이터를 [", path,"]에 저장 합니다.") # 알림 메시지
+  region_nm <- subset(loc, code == regmatches(url_list[i], regexpr("(?<=LAWD_CD=)[^&]*", url_list[i], perl=TRUE)))[,4] # 지역명 추출
+  month <- gsub(".*DEAL_YMD=(\\d{6}).*", "\\1", url_list[i])                                                           # 연월(YYYYMM) 추출
+  path <- as.character(paste0("./02_raw_data/", region_nm, "_", month,".csv"))                # 저장위치 설정
+  write.csv(apt_bind, path)                                                                   # csv 저장
+  msg <- paste0("[", i,"/",length(url_list), "] 수집한 데이터를 [", path,"]에 저장 합니다.")  # 알림 메시지
   cat(msg, "\n\n")
-}   # 바깥쪽 반복문 종료
-
+}                                                                                             # 바깥쪽 반복문 종료
 
 #----------
 # 3-4 통합
@@ -124,20 +124,34 @@ for(i in 1:length(url_list)){   # 요청목록(url_list) 반복
 
 #---# [1단계: csv 통합]
 
-setwd(dirname(rstudioapi::getSourceEditorContext()$path))  # 작업폴더 설정
-files <- dir("./02_raw_data")    # 폴더 내 모든 파일 이름 읽기
-library(plyr)               # install.packages("plyr")
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))              # 작업폴더 설정
+files <- dir("./02_raw_data")                                          # 폴더 내 모든 파일 이름 읽기
+library(plyr)   # install.packages("plyr")
 apt_price <- ldply(as.list(paste0("./02_raw_data/", files)), read.csv) # 모든 파일 하나로 결합
 tail(apt_price, 2)  # 확인
 
 #---# [2단계: 저장]
 
-dir.create("./03_integrated")   # 새로운 폴더 생성
-save(apt_price, file = "./03_integrated/03_apt_price.rdata") # 저장
-write.csv(apt_price, "./03_integrated/03_apt_price.csv")   
+dir.create("./03_integrated")                                # 새로운 폴더 생성
+save(apt_price, file = "./03_integrated/03_apt_price.rdata") # rdata 형식으로 저장
+write.csv(apt_price, "./03_integrated/03_apt_price.csv")     # csv 형식으로 저장
+
+#----------- 참고 1 ------------------------------------------------------------------------------
+
+# 2024년 7월에 api가 개편된 이후에 새롭게 신청하신 분들의 경우 실거래가 수집 지역명과 수집연월이 표시되지 않는 문제가 발생하였습니다
+# 기존의 api와 새로운 api의 url 자릿수가 달라서 나타나는 문제인것 같습니다.
+# 이 문제를 반영하여 새로운 코드를 변경하였습니다.
+
+# 기존: 2024년 7월 이전에 인증키를 발급받으신 경우에만 작동합니다.
+region_nm <- subset(loc, code == regmatches(url_list[i], regexpr("(?<=LAWD_CD=)[^&]*", url_list[i], perl=TRUE)))[,4] # 지역명 추출
+month <- gsub(".*DEAL_YMD=(\\d{6}).*", "\\1", url_list[i])                                                           # 연월(YYYYMM) 추출
+
+# 개정: 인증키를 발급 시기와 상관없이 모든 경우에 작동합니다.
+region_nm <- subset(loc, code== str_sub(url_list[i],195, 199))$addr_1 # 지역명 추출
+month <- str_sub(url_list[i],210, 215)                                # 연월(YYYYMM) 추출
 
 
-#----------- 참고 ------------------------------------------------------------------------------
+#----------- 참고 2 ------------------------------------------------------------------------------
 # 데이터 항목이 추가되면서 위치가 계속 변동되고 있어서 달라질 때마다 새롭게 업데이트 하겠습니다.
 # 이번 코드는 2024.8.01 기준입니다.
 
@@ -201,7 +215,7 @@ head(file)
 #---------------------------------------------------------------------------------------------------------------
 
 # 참고: 국토교통부_아파트 매매 실거래가 자료 => 활용 신청은 아래 링크에서 해 주세요
-# https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15126469#tab_layer_detail_function
+# https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15126469 
 
 #---------------------------------------------------------------------------------------------------------------
 
