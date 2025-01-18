@@ -9,7 +9,7 @@
    신규신청자는 아래의 자료를 참고하시어 카카오 지오코딩을 이용하시면 됩니다.
    (https://github.com/cmman75/Open_data_R_with_Shiny/blob/main/250118_(%EC%B6%94%EA%B0%80)_%EB%B3%80%EA%B2%BD%EB%90%9C%20%EC%A7%80%EC%98%A4%EC%BD%94%EB%94%A9%20%EC%8B%A0%EC%B2%AD%EB%B0%A9%EB%B2%95.pdf) </mark>
 
-   또한 발표자료도 삭제되어 다시 업로드 합니다.
+   또한 발표자료도 실수로 삭제된 것으로 나타나 수정보완본을 다시 업로드 합니다.
    https://github.com/cmman75/Open_data_R_with_Shiny/tree/main/%ED%8C%8C%EC%9B%8C%ED%8F%AC%EC%9D%B8%ED%8A%B8(01-12%EA%B0%95)
 
 12) [24-09-22]  
