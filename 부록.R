@@ -14,6 +14,7 @@ library(sp)         # install.packages("sp")
 library(geojsonio)  # install.packages("geojsonio")
 # 작업폴더 설정
 setwd(dirname(rstudioapi::getSourceEditorContext()$path)) 
+getwd()
 dir.create("./01_save")
 # 행정동 geojson 불러오기
 admin <- geojsonio::geojson_read("./SBJ_2003_001/tl_scco_emd.geojson", what = "sp")  
@@ -331,17 +332,29 @@ dev.off(dev.list()["RStudioGD"])  # 플롯창 정리
 # 04_기초분석 II: 집계구(fishnet)별 이동특성 
 #--------------------------------------------
 
+setwd(dirname(rstudioapi::getSourceEditorContext()$path)) # 작업폴더 설정
+
 #---# 04-1_집계구별 Trip 계산
 
 # (1) 정류장(point) 데이터와 fishnet(polygon)의 공간조인(spatial join)
 # 파일 불러오기
+
 load("./01_save/02_003_trip_chain.rdata")
 load("./01_save/01_002_fishnet.Rdata")
 load("./01_save/03_003_sta_pnt.rdata")
 load("./01_save/01_001_admin.rdata")
-# 공간조인
-require(spatialEco)  #  install.packages("spatialEco") 
-sta_pnt <- point.in.poly(sta_pnt, fishnet) 
+
+# sta_pnt(정류장 위치) / fishnet(분석단위: 격자망) 을 sp형에서 sf형으로 변환
+# spatialEco 라이브러리가 2.0으로 업데이트 되면서 기존의 point.in.poly 명령어가 제거되었음
+# 따라서 이 문제를 해결하기 위하여 sp형의 point.in.poly 대신 sf형의 st_intersection 명령어를 사용
+
+library(sf)
+sta_pnt <- st_as_sf(sta_pnt)                  # 정류장 위치 sp를 sf 객체로 변환
+fishnet <- st_as_sf(fishnet)                  # 격자망      sp를 sf 객체로 변환
+sta_pnt <- st_intersection(sta_pnt, fishnet)  # 해당 정류장 포인트(sta_pnt)가 몇번째 격자망(fishnet) 에 속하는지
+                                              # 추출하기 위하여 st_intersection 사용 (시간이 많이걸립니다. 커피 한잔 하시면서 기다리세요요)
+sta_pnt <- as(sta_pnt, Class = "Spatial")     # 다시 sf형을 sp형으로 변환
+
 # 저장 
 save(sta_pnt, file="./01_save/04_001_sta_pnt.rdata") 
 head(sta_pnt@data[, c(1, 4, 10, 12)], 2)      
@@ -386,10 +399,12 @@ save(fishnet_2, file="./01_save/04_004_fishnet_2.rdata")
 head(fishnet_2, 2)
 
 # (2) 출발지 기준 => "총이용객수", "환승횟수", "평균환승" 플로팅 
+
 # 총이용객수
 library(tmap)
 tm_shape(fishnet_2) + tm_polygons("총이용객수", alpha = 0.6, border.col = "gray50", border.alpha = .2, colorNA = NULL) + 
   tm_shape(admin,  alpha = 0.1) + tm_borders() + tm_basemap("OpenStreetMap")
+
 # 평균환승
 tm_shape(fishnet_2) + tm_polygons("평균환승", alpha = 0.6, border.col = "gray50", border.alpha = .2, colorNA = NULL) + 
   tm_shape(admin,  alpha = 0.1) + tm_borders() + tm_basemap("OpenStreetMap")
@@ -466,13 +481,14 @@ od_intra2 <- od_intra %>%
 od_intra2$평균환승 <- round((od_intra2$환승횟수 / od_intra2$총이용객수),1) 
 # 컬럼 이름 정리하기
 colnames(od_intra2) <- c("id.x", "id.y", "총이용객수", "환승횟수", "평균환승") 
-head(od_intra2, 2)
+head(od_intra2, 5)
 
 # (3) 시각화 위하여 공간 데이터 형식(OD2LINE)으로 변경
 # 공간 데이터 형식(OD2LINE) 만들기 
+fishnet <- st_as_sf(fishnet)         # 격자망  sp를 sf 객체로 변환
 od_line <- od2line(od_intra2, fishnet)   
 # 이용자 수 20건 이상인 O-D 라인 필터링
-od_line <- od_line[od_line@data$총이용객수 %in% 20:3000, ]  
+od_line <- od_line[od_line$총이용객수 %in% 20:3000, ]  
 # 저장
 save(od_line, file="./01_save/05_003_od_line.rdata")  
 # 총이용객수 시각화
@@ -485,58 +501,10 @@ qtm("Hwaseong") +
   qtm(subset(od_line, od_line$총이용객수 > 400), lines.col = "orange", lines.alpha =.6, lines.lwd = 2) +
   qtm(subset(od_line, od_line$총이용객수 > 1000), lines.col = "red", lines.alpha =.8, lines.lwd = 4)
 
-#---# 05-2_통근 시간대 커뮤니티 탐지
+# 커뮤니티 탐지 안됨
+# (패키지의 community detection 기능 중 일부가 제거되어 해당 분석이 어렵습니다. 따라서 이 부분은 넘어가겠습니다.)
 
-# (1) 네트워크 속성 변환(Spatial_data_frame => Spatial_Network) 
-library(stplanr) # install.packages("stplanr")
-# g, nb 등 속성타입 확인
-od_line_sln <- SpatialLinesNetwork(od_line)  
-# igraph 연결 속성 확인
-od_line_sln@nb      
-od_line_sln@g       
-# 네트워크 가중치 부여하기
-library(igraph)
-E(od_line_sln@g)$weight <- od_line@data$총이용객수  
-# 엣지 속성 보기 
-edge_attr(od_line_sln@g)$weight     
-# 플로팅 하기 
-plot(od_line_sln@g, edge.width=E(od_line_sln@g)$weight/100) 
-
-# (2) 모형별 modularity 비교
-library(igraph)
-# cluster_spinglass 모형 
-modulos <- cluster_spinglass(od_line_sln@g) 
-modularity(modulos)   
-# walktrap 모형
-modulos <- walktrap.community(od_line_sln@g) 
-modularity(modulos)
-# multilevel 모형
-modulos <- multilevel.community(od_line_sln@g)  
-modularity(modulos)  
-
-# (3) 지도 시각화
-# 버텍스 좌표값 추출  
-l_out <- cbind(od_line_sln@g$x, od_line_sln@g$y)  
-# 화면분할
-par(mfrow=c(1,2))
-# 사람들 이동에 대한 Desire Line 그리기
-plot(admin, lwd=1, border="grey", main =" Desire Line", xlim = c(126.93, 127.16), ylim = c(37.1, 37.3))
-plot(od_line, lwd=(od_line$총이용객수)/300, col="orange", rescale = T, add=T)
-# Desire Line 기반 커뮤니티 디텍션
-plot(admin, lwd=1, border="grey", main =" Community Detection", xlim = c(126.93, 127.16), ylim = c(37.1, 37.3))
-plot.igraph(od_line_sln@g, vertex.label=NA,
-  vertex.size=0.05*igraph::degree(od_line_sln@g),
-  vertex.color = adjustcolor("blue", alpha.f = .4),
-  edge.width=(edge_attr(od_line_sln@g)$weight)/1000, 
-  edge.color="orange",
-  edge.curved=0.3, 
-  layout = l_out,
-  mark.groups= modulos,
-  mark.border="NA",
-  rescale = F,
-  add=T)
-
-# (3) 정리
+# (4) 정리
 par(mfrow=c(1,1))                
 rm(list = ls())                   # 메모리 정리 
 dev.off(dev.list()["RStudioGD"])  # 플롯창 정리
@@ -585,13 +553,14 @@ od_intra2$평균환승 <- round((od_intra2$환승횟수 / od_intra2$총이용객
 colnames(od_intra2) <- c("id.x", "id.y", "총이용객수", "환승횟수", "평균환승") 
 head(od_intra2, 2)
 
-# (3) 지도 시각화
-# 시각화 위하여 공간 데이터 형식(OD2LINE)으로 변경
-od_line <- od2line(od_intra2, fishnet)  
+# (3) 시각화 위하여 공간 데이터 형식(OD2LINE)으로 변경
+# 공간 데이터 형식(OD2LINE) 만들기 
+fishnet <- st_as_sf(fishnet)         # 격자망  sp를 sf 객체로 변환
+od_line <- od2line(od_intra2, fishnet)   
 # 이용자 수 20건 이상인 O-D 라인 필터링
-od_line <- od_line[od_line@data$총이용객수 %in% 20:3000, ]  
+od_line <- od_line[od_line$총이용객수 %in% 20:3000, ]  
 # 저장
-save(od_line, file="./01_save/05_004_od_line.rdata") 
+save(od_line, file="./01_save/05_004_od_line.rdata")  
 # 총이용객수 시각화
 library(tmap)
 qtm("Hwaseong") +
@@ -601,198 +570,13 @@ qtm("Hwaseong") +
   qtm(subset(od_line, od_line$총이용객수 > 400), lines.col = "orange", lines.alpha =.6, lines.lwd = 2) +
   qtm(subset(od_line, od_line$총이용객수 > 1000), lines.col = "red", lines.alpha =.8, lines.lwd = 4) 
 
-#---# 06-2_비통근 시간대 커뮤니티 탐지
-
-# (1) 네트워크 속성 변환(Spatial_data_frame => Spatial_Network) 
-library(stplanr) # install.packages("stplanr")
-# 네트워크 속성 변환(Spatial_data_frame => Spatial_Network) 
-od_line_sln <- SpatialLinesNetwork(od_line) 
-# g, nb 등 속성타입 확인
-od_line_sln@nb    
-# igraph 연결 속성 확인
-od_line_sln@g        
-# 네트워크 가중치 부여하기
-library(igraph)
-E(od_line_sln@g)$weight <- od_line@data$총이용객수  
-# 엣지 속성 보기
-edge_attr(od_line_sln@g)$weight      
-# 플로팅 하기
-plot(od_line_sln@g, edge.width=E(od_line_sln@g)$weight/100)  
-
-# (2) 모형별 modularity 비교
-library(igraph)
-# cluster_spinglass 알고리즘  
-modulos <- cluster_spinglass(od_line_sln@g) 
-modularity(modulos)   
-# walktrap 알고리즘  
-modulos <- walktrap.community(od_line_sln@g) 
-modularity(modulos)
-# multilevel 알고리즘 
-modulos <- multilevel.community(od_line_sln@g)  
-modularity(modulos)
-
-# (3)	지도 시각화
-# 버텍스 좌표값 추출  
-l_out <- cbind(od_line_sln@g$x, od_line_sln@g$y)  
-# 화면분할
-par(mfrow=c(1,2))
-# 사람들 이동에 대한 Desire Line 그리기
-plot(admin, lwd=1, border="grey", main =" Desire Line", xlim = c(126.93, 127.16), ylim = c(37.1, 37.3))
-plot(od_line, lwd=(od_line$총이용객수)/300, col="orange", rescale = T, add=T)
-# Desire Line 기반 커뮤니티 디텍션
-plot(admin, lwd=1, border="grey", main =" Community Detection", xlim = c(126.93, 127.16), ylim = c(37.1, 37.3))
-plot.igraph(od_line_sln@g, vertex.label=NA,
-            vertex.size=0.05*igraph::degree(od_line_sln@g),
-            vertex.color = adjustcolor("blue", alpha.f = .4),
-            edge.width=(edge_attr(od_line_sln@g)$weight)/1000, 
-            edge.color="orange", 
-            edge.curved=0.3, 
-            layout = l_out,
-            mark.groups= modulos,
-            mark.border="NA",
-            rescale = F,
-            add=T)
+# 커뮤니티 탐지 안됨
+# (패키지의 community detection 기능 중 일부가 제거되어 해당 분석이 어렵습니다. 따라서 이 부분은 넘어가겠습니다.)
 
 # (4) 정리
 par(mfrow=c(1,1))                
 rm(list = ls())                   # 메모리 정리 
 dev.off(dev.list()["RStudioGD"])  # 플롯창 정리
-
-#----------
-# 7. 종합
-#--------- 
-
-#---# 07-1_버스노선 네트워크 만들기
-
-# (1) 화성시 대중교통 이동 네트워크
-# OD2LINE 만들기   
-setwd(dirname(rstudioapi::getSourceEditorContext()$path))  ; getwd()  
-load("./01_save/04_002_trip_chain.rdata")  
-load("./01_save/04_003_grid_chain.rdata")
-load("./01_save/04_001_sta_pnt.rdata")
-load("./01_save/01_002_fishnet.Rdata")
-load("./01_save/01_001_admin.rdata")
-# inter 이동만 남기기(intra 이동 지우기)
-library(stplanr)  # install.packages("stplanr")
-od_intra <- filter(grid_chain, id.x != id.y)  
-# intra 이동별 총이용객수, 환승횟수 집계하기 
-library(dplyr)
-od_intra2 <- od_intra %>%   
-  group_by(id.x, id.y) %>% 
-  summarise_each(funs(sum)) %>% 
-  dplyr::select(id.x, id.y, 총이용객수, 환승횟수)
-# 평균환승횟수 계산 
-od_intra2$평균환승 <- round((od_intra2$환승횟수 / od_intra2$총이용객수),1) 
-# 컬럼 이름 정리하기
-colnames(od_intra2) <- c("id.x", "id.y", "총이용객수", "환승횟수", "평균환승") 
-# od_line 그리기 / 저장하기 
-od_line <- od2line(od_intra2, fishnet)  
-save(od_line, file="./01_save/08_001_od_line.rdata")  
-
-# (2) OD 라인 시각화
-# 이용자 수 20건 이상인 O-D 라인 필터링 하기
-library(dplyr)      
-od_line <- od_line[od_line@data$총이용객수 %in% 20:8000, ]  
-library(tmap)  
-qtm("Hwaseong") +
-tm_basemap("OpenStreetMap") +
-qtm(od_line, lines.lwd ="총이용객수", lines.col="red") 
-
-# (3) OD2LINE => Spatial_Network로 변환하기 
-# 네트워크 속성 변환(Spatial_data_frame => Spatial_Network) 
-# 엣지 => 가중치 부여: 총이용객수 => 엣지 속성 보기 
-library(stplanr) # install.packages("stplanr")
-od_line_sln <- SpatialLinesNetwork(od_line)   
-library(igraph) # install.packages("igraph")
-E(od_line_sln@g)$weight <- od_line@data$총이용객수  
-edge_attr(od_line_sln@g)$weight 
-# 버텍스 좌표값 추출 => igraph 레이아웃 만들기
-l_out <- cbind(od_line_sln@g$x, od_line_sln@g$y)
-save(l_out, file="./01_save/08_001_l_out.rdata")  
-# 플로팅 하기
-plot(admin, lwd=1, border="grey", main ="화성시 대중교통 이동 네트워크", xlim = c(126.93, 127.16), ylim = c(37.1, 37.3))
-plot.igraph(od_line_sln@g, 
-  vertex.label=V(od_line_sln@g),
-  vertex.label.color= "black",
-  vertex.label.cex= .8,
-  vertex.size=0.03*igraph::degree(od_line_sln@g),
-  vertex.color = adjustcolor("blue", alpha.f = .4),
-  edge.width=(edge_attr(od_line_sln@g)$weight)/1000, 
-  edge.color="orange",
-  edge.curved=0.3, 
-  layout = l_out,
-  rescale = F,
-  add=T)
-
-# (4) Edge의 역가중치(inverse weight)를 표준화 하기 
-edge_attr(od_line_sln@g)$weight <- (max(edge_attr(od_line_sln@g)$weight) - edge_attr(od_line_sln@g)$weight) / (max(edge_attr(od_line_sln@g)$weight) - min(edge_attr(od_line_sln@g)$weight))
-plot(density(edge_attr(od_line_sln@g)$weight), main="")
-
-#---# 07-2_최적노선 도출 및 시각화
-
-# (1) 최단노선 연결
-# 최단노선 1: 향남(54) - 병점역(19) - 삼성 화성 캠퍼스(2) - 동탄 이지더원 아파트 (21)
-#---#
-# 최단노선 1-1: 향남(54) - 병점역(19) 
-path1 <- shortest_paths(od_line_sln@g, from = "54", to = "21", output = "both") ; unlist(path1$epath) 
-# 최단노선 1-2: 병점역(19) - 삼성 화성 캠퍼스(2) 
-path2 <- shortest_paths(od_line_sln@g, from = "19", to = "2", output = "both") ; unlist(path2$epath) 
-# 최단노선 1-3: 삼성 화성 캠퍼스(2) - 동탄 이지더원 아파트 (21)
-path3 <- shortest_paths(od_line_sln@g, from = "2", to = "21", output = "both") ; unlist(path3$epath)  
-ecol <- rep(NA, ecount(od_line_sln@g)) 
-ecol[unlist(c(path1$epath, path2$epath, path3$epath))] <- "red" 
-edge_attr(od_line_sln@g)$weight[unlist(c(path1$epath, path2$epath, path3$epath))] <- 1500
-
-#---#
-# 최단노선 2: 레이크빌(36) - 동탄 이지더원 아파트 (21) - 삼성 화성 캠퍼스(18) - 삼성 수원 디지털 본사(39)
-#---#
-# 최단노선 2-1: 레이크빌(36) - 동탄 이지더원 아파트 (21)
-path1 <- shortest_paths(od_line_sln@g, from = "36", to = "21", output = "both") ; unlist(path1$epath) 
-# 최단노선 2-2: 동탄 이지더원 아파트 (21) - 삼성 화성 캠퍼스(6)
-path2 <- shortest_paths(od_line_sln@g, from = "21", to = "6", output = "both") ; unlist(path2$epath) 
-# 최단노선 2-3: 삼성 화성 캠퍼스(6) - 삼성 수원 디지털 본사(39)
-path3 <- shortest_paths(od_line_sln@g, from = "6", to = "39", output = "both") ; unlist(path3$epath) 
-ecol[unlist(c(path1$epath, path2$epath, path3$epath))] <- "blue" 
-edge_attr(od_line_sln@g)$weight[unlist(c(path1$epath, path2$epath, path3$epath))] <- 1500
-
-# 최단노선 3: 향남(54) - 오산역(49)
-path1 <- shortest_paths(od_line_sln@g, from = "54", to = "49", output = "both") ; unlist(path1$epath)
-ecol[unlist((path1$epath))] <- "darkorange" 
-edge_attr(od_line_sln@g)$weight[unlist(path1$epath)] <- 600
-
-# 최단노선 4: 동탄 이지더원 아파트(21) - 보정역(58)
-path1 <- shortest_paths(od_line_sln@g, from = "21", to = "58", output = "both") ; unlist(path1$epath)
-ecol[unlist((path1$epath))] <- "darkorchid1" 
-edge_attr(od_line_sln@g)$weight[unlist(path1$epath)] <- 600
-plot(admin, lwd=1, border="grey", main ="화성시 신규 버스노선", 
-     xlim = c(126.93, 127.16), ylim = c(37.1, 37.3))
-plot(od_line_sln@g, vertex.label=NA, vertex.size= 0.01, 
-     edge.width=4*(edge_attr(od_line_sln@g)$weight)/1000, edge.color=ecol, 
-     edge.curved=0.1, layout=l_out, rescale = F, add=T)
-
-# 향남  (54) 
-text(od_line_sln@g$x[54], od_line_sln@g$y[54], "향남",  cex = 1.2, pos = 1)  
-# 병점역(19)
-text(od_line_sln@g$x[19], od_line_sln@g$y[19], "병점역",  cex = 1.2, pos = 2)  
-# 삼성 화성 캠퍼스(2)
-text(od_line_sln@g$x[2],  od_line_sln@g$y[2],  "삼성 화성캠", cex = 1.2, pos = 3)  
-# 동탄 이지더원 아파트 (21)
-text(od_line_sln@g$x[21], od_line_sln@g$y[21], "이지원A", cex = 1.2, pos = 4)  
-# 레이크빌(36) 
-text(od_line_sln@g$x[36], od_line_sln@g$y[36], "레이크빌A", cex = 1.2, pos = 4) 
-# 삼성 화성 캠퍼스(18) 
-text(od_line_sln@g$x[18], od_line_sln@g$y[18], "삼성 화성캠", cex = 1.2, pos = 2)  
-# 삼성 수원 캠퍼스(39) 
-text(od_line_sln@g$x[39], od_line_sln@g$y[39], "삼성 수원캠", cex = 1.2, pos = 2)  
-# 오산역(49) 
-text(od_line_sln@g$x[49], od_line_sln@g$y[49], "오산역", cex = 1.2, pos = 4) 
-# 보정역(58)
-text(od_line_sln@g$x[58], od_line_sln@g$y[58], "보정역", cex = 1.2, pos = 4) 
-box(lty = "solid", col = 'black')
-legend(od_line_sln@g$x[43]+0.02, od_line_sln@g$y[43]+0.04, 
-       legend=c("향남-이지더원A", "레이크빌A-삼성 수원캠", "향남-오산역", "보정역-이지더원A"),
- col=c("red", "blue", "darkorange", "darkorchid1"), lty=1, cex=.8)
-
 
 
 #---# [참고] 맥 사용자를 위한 한글폰트 #-------------------------#
