@@ -66,8 +66,8 @@ crs(raster_high) <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 + 
 plot(raster_high)  # 지도확인
 plot(bnd, col=NA, border = "red", add=TRUE)
 
-#---# [7단계: 지도 위에 래스터 이미지 올리기] # 최근 rgdal 패키지가 CRAN에서 삭제되어 설치 방법을 변경 => 패키지 설치가 안 될 경우 Rtools를 설치해 주십시오 !!!
-library(rgdal)    # install.packages("https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-6.tar.gz", repos = NULL, type="source")
+#---# [7단계: 지도 위에 래스터 이미지 올리기] 
+library(rgdal)    # 최근 rgdal 패키지가 CRAN에서 삭제되었습니다. 좌표계 때문에 사용하는데 다른 패키지에서 보완하므로 무시하고 진행하셔도 이상없습니다. 
 library(leaflet)  # install.packages("leaflet")
 leaflet() %>% 
   #---# 베이스맵 불러오기
